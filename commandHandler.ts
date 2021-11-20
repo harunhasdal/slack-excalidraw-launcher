@@ -15,8 +15,35 @@ export const boardCommandHandler = (params: HookParameters) => {
         type: "section",
         text: {
           type: "mrkdwn",
-          text: `<${roomUrl}|Launch whiteboard> to collaborate on ${params.text}`,
+          text: `Hello, ${params.user_name} invites you to a <${roomUrl}|live whiteboarding session> to collaborate.`,
         },
+      },
+      {
+        type: "divider",
+      },
+      {
+        type: "section",
+        text: {
+          type: "mrkdwn",
+          text: `Click "Launch" to jump into the whiteboard: ${params.text}`,
+        },
+        accessory: {
+          type: "button",
+          text: {
+            type: "plain_text",
+            text: "Launch",
+            emoji: true,
+          },
+          value: "click_me_123",
+          url: roomUrl,
+          action_id: "button-action",
+        },
+      },
+      {
+        type: "image",
+        image_url:
+          "https://github.com/excalidraw/excalidraw/raw/master/public/og-image-sm.png",
+        alt_text: "excalidraw",
       },
     ],
   };
