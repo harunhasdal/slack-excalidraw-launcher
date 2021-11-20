@@ -1,7 +1,4 @@
-// deno-lint-ignore-file no-unused-vars
 import { HookParameters } from "./types.ts";
-
-const SLACK_BOT_TOKEN = Deno.env.get("SLACK_BOT_TOKEN");
 
 export const boardCommandHandler = (params: HookParameters) => {
   const baseUrl = "https://excalidraw.com/";
@@ -11,6 +8,8 @@ export const boardCommandHandler = (params: HookParameters) => {
     .substring(0, 20)},${roomId.substring(0, 22)}`;
 
   const responseBlocks = {
+    // deno-lint-ignore camelcase
+    response_type: "in_channel",
     blocks: [
       {
         type: "section",
