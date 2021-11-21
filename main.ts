@@ -3,17 +3,28 @@ import { HookParameters } from "./types.ts";
 import { boardCommandHandler } from "./commandHandler.ts";
 import { crypto } from "https://deno.land/std@0.111.0/crypto/mod.ts";
 
+// Read environment variables from Deno runtime
 const SLACK_SIGNING_SECRET = Deno.env.get("SLACK_SIGNING_SECRET");
 const verifySignature = Deno.env.get("VERIFY_SIGNATURE") || false;
 
-async function slackSlashCommandHandler(request: Request) {
+/**
+ * `slackSlashCommandHandler` Handles incoming http requests and returns the HTTP response.
+ *
+ * Based on slack slash command guidelines it validates the requests and verifies the signature
+ * before invoking the particular command handler
+ */
+async function slackSlashCommandHandler(request: Request): Promise<Response> {
   console.log(`Serving request from`, request.headers.get("user-agent"));
+
+  // Only POST requests are allowed
   if (request.method !== "POST") {
     return new Response(null, {
       status: 405,
       statusText: "Method Not Allowed",
     });
   }
+
+  // Verify request
   const requestSignature = request.headers.get("x-slack-signature") as string;
   if (!requestSignature) {
     return new Response(null, {
@@ -38,6 +49,7 @@ async function slackSlashCommandHandler(request: Request) {
     }
   }
 
+  // Verify content type
   const contentType = request.headers.get("content-type");
   if (
     !(
@@ -50,7 +62,8 @@ async function slackSlashCommandHandler(request: Request) {
       statusText: "Content-Type not supported",
     });
   }
-  // Handle request.
+
+  // Handle request by passing the request parameters to the handler function
   const formData = await request.formData();
   const params = Object.fromEntries(formData) as unknown as HookParameters;
 

@@ -1,12 +1,21 @@
 import { HookParameters } from "./types.ts";
 
-export const boardCommandHandler = (params: HookParameters) => {
+/**
+ * `boardCommandHandler` handles the `/board` command.
+ *
+ * It builds a live session URL on the fly and immediately responds to the slack channel with the link
+ */
+export const boardCommandHandler = (params: HookParameters): Response => {
+  // Build a live whiteboarding session URL as documented in
+  // https://github.com/excalidraw/excalidraw/blob/master/README.md#create-a-collaboration-session-manually
   const baseUrl = "https://excalidraw.com/";
   const roomId = globalThis.crypto.randomUUID();
   const roomUrl = `${baseUrl}#room=${roomId
     .replaceAll("-", "")
     .substring(0, 20)},${roomId.substring(0, 22)}`;
 
+  // Build a response for the message using slack block-kit API
+  // Reference: https://api.slack.com/block-kit
   const responseBlocks = {
     // deno-lint-ignore camelcase
     response_type: "in_channel",
